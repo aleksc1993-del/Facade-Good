@@ -4,6 +4,7 @@ const path = require('node:path');
 const createWindow = () => {
   const window = new BrowserWindow({ width: 1440, height: 900, minWidth: 1100, minHeight: 700 });
   if (process.env.VITE_DEV_SERVER_URL) window.loadURL(process.env.VITE_DEV_SERVER_URL);
+  else if (!app.isPackaged) window.loadURL('http://localhost:5173');
   else window.loadFile(path.join(__dirname, '../dist/index.html'));
 };
 app.whenReady().then(() => { createWindow(); app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); }); });
