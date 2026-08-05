@@ -15,7 +15,10 @@ const FullWidthItem = styled(Form.Item)({ gridColumn: '1 / -1' });
 const ItemsSection = styled.div({ gridColumn: '1 / -1' });
 const TotalRow = styled.div({ display: 'flex', justifyContent: 'flex-end', marginTop: 16, fontSize: 16 });
 const Search = styled(Input)({ maxWidth: 420, marginBottom: 20 });
+const Filters = styled.div({ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 });
+const FilterSelect = styled(Select)({ minWidth: 190 });
 interface OrderFormValues { clientId: string; number: string; status: OrderStatus; deadline: Dayjs | null; comment: string; items: OrderItem[] }
+type DebtFilter = 'all' | 'with-debt' | 'without-debt';
 const emptyOrder: OrderFormValues = { clientId: '', number: '', status: orderStatuses[0], deadline: null, comment: '', items: [] };
 const paymentStatusColors: Record<PaymentStatus, string> = { Оплачено: 'success', 'Частично оплачено': 'warning', 'Не оплачено': 'error' };
 
@@ -26,6 +29,10 @@ export function OrdersPage() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | undefined>();
+  const [clientFilter, setClientFilter] = useState<string | undefined>();
+  const [deadlineFilter, setDeadlineFilter] = useState<[Dayjs | null, Dayjs | null] | null>(null);
+  const [debtFilter, setDebtFilter] = useState<DebtFilter>('all');
   const [form] = Form.useForm<OrderFormValues>();
   const items = Form.useWatch('items', form) ?? [];
   const orderTotal = items.reduce((total, item) => total + getItemTotal(item), 0);
@@ -38,21 +45,34 @@ export function OrdersPage() {
   const visibleOrders = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLocaleLowerCase('ru-RU');
     const compactQuery = normalizedQuery.replace(/[\s()+-]/g, '');
-    if (!normalizedQuery) return storedOrders;
-
     return storedOrders.filter((order) => {
       const client = clients.find((item) => item.id === order.clientId);
       const clientNameValue = client?.name.toLocaleLowerCase('ru-RU') ?? '';
       const clientPhone = client?.phone.toLocaleLowerCase('ru-RU') ?? '';
       const compactPhone = clientPhone.replace(/[\s()+-]/g, '');
-      return order.number.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+      const matchesSearch = !normalizedQuery || order.number.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
         || clientNameValue.includes(normalizedQuery)
         || clientPhone.includes(normalizedQuery)
         || compactPhone.includes(compactQuery);
+      const matchesStatus = !statusFilter || order.status === statusFilter;
+      const matchesClient = !clientFilter || order.clientId === clientFilter;
+      const deadline = order.deadline ? dayjs(order.deadline) : null;
+      const matchesDeadline = !deadlineFilter || (deadline?.isValid() && (!deadlineFilter[0] || !deadline.isBefore(deadlineFilter[0], 'day')) && (!deadlineFilter[1] || !deadline.isAfter(deadlineFilter[1], 'day')));
+      const balance = getOrderBalance(order, payments);
+      const matchesDebt = debtFilter === 'all' || (debtFilter === 'with-debt' ? balance > 0 : balance <= 0);
+      return matchesSearch && matchesStatus && matchesClient && matchesDeadline && matchesDebt;
     });
-  }, [clients, searchQuery, storedOrders]);
+  }, [clients, clientFilter, deadlineFilter, debtFilter, payments, searchQuery, statusFilter, storedOrders]);
   const orders = visibleOrders;
+  const resetFilters = () => { setSearchQuery(''); setStatusFilter(undefined); setClientFilter(undefined); setDeadlineFilter(null); setDebtFilter('all'); };
   return <>
+    <Filters>
+      <FilterSelect allowClear placeholder="РЎС‚Р°С‚СѓСЃ" value={statusFilter} options={orderStatuses.map((status) => ({ value: status, label: status }))} onChange={(value) => setStatusFilter(value as OrderStatus | undefined)} />
+      <FilterSelect allowClear showSearch optionFilterProp="label" placeholder="РљР»РёРµРЅС‚" value={clientFilter} options={clients.map((client) => ({ value: client.id, label: client.name }))} onChange={(value) => setClientFilter(value as string | undefined)} />
+      <DatePicker.RangePicker format="DD.MM.YYYY" value={deadlineFilter} onChange={setDeadlineFilter} />
+      <FilterSelect value={debtFilter} options={[{ value: 'all', label: 'Р›СЋР±Р°СЏ Р·Р°РґРѕР»Р¶РµРЅРЅРѕСЃС‚СЊ' }, { value: 'with-debt', label: 'РўРѕР»СЊРєРѕ СЃ РґРѕР»РіРѕРј' }, { value: 'without-debt', label: 'Р‘РµР· Р·Р°РґРѕР»Р¶РµРЅРЅРѕСЃС‚Рё' }]} onChange={(value) => setDebtFilter(value as DebtFilter)} />
+      <Button onClick={resetFilters}>РЎР±СЂРѕСЃРёС‚СЊ</Button>
+    </Filters>
     <Search allowClear prefix={<SearchOutlined />} placeholder="Поиск по клиенту, телефону или номеру заказа" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
     <Header><div><Typography.Title level={2}>Заказы</Typography.Title><Typography.Text type="secondary">Учёт заказов и контроль сроков производства</Typography.Text></div><Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>Добавить заказ</Button></Header>
     <Card><Table<Order> rowKey="id" dataSource={orders} locale={{ emptyText: <Empty description="Заказов пока нет" /> }} columns={[{ title: 'Номер', dataIndex: 'number' }, { title: 'Клиент', render: (_value: string, order: Order) => clientName(order.clientId) }, { title: 'Стоимость', render: (_value: string, order: Order) => money(getOrderTotal(order)) }, { title: 'Оплачено', render: (_value: string, order: Order) => money(getOrderPaid(order.id, payments)) }, { title: 'Остаток', render: (_value: string, order: Order) => money(getOrderBalance(order, payments)) }, { title: 'Оплата', render: (_value: string, order: Order) => { const status = getPaymentStatus(order, payments); return <Tag color={paymentStatusColors[status]}>{status}</Tag>; } }, { title: 'Статус', dataIndex: 'status', render: (status: OrderStatus) => <Tag>{status}</Tag> }, { title: 'Срок', dataIndex: 'deadline', render: (deadline: string) => deadline ? dayjs(deadline).format('DD.MM.YYYY') : '—' }, { title: 'Комментарий', dataIndex: 'comment', ellipsis: true }, { title: 'Действия', width: 120, render: (_value: string, order: Order) => <Space><Button aria-label="Редактировать" icon={<EditOutlined />} onClick={() => openEditModal(order)} /><Popconfirm title="Удалить заказ?" okText="Удалить" cancelText="Отмена" onConfirm={() => deleteOrder(order.id)}><Button danger aria-label="Удалить" icon={<DeleteOutlined />} /></Popconfirm></Space> }]} /></Card>
