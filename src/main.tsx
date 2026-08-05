@@ -7,6 +7,7 @@ import { DashboardPage } from '@pages/dashboard';
 import { PlaceholderPage } from '@pages/placeholder';
 import { ClientsPage } from '@pages/clients';
 import { OrdersPage } from '@pages/orders';
+import { PaymentsPage } from '@pages/payments';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
@@ -14,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/" element={<DashboardPage />} />
       <Route path="/clients" element={<ClientsPage />} />
       <Route path="/orders" element={<OrdersPage />} />
-      <Route path="/payments" element={<PlaceholderPage title="Платежи" description="Здесь будет история платежей и задолженности." />} />
+      <Route path="/payments" element={<PaymentsPage />} />
       <Route path="/settings" element={<PlaceholderPage title="Настройки" description="Здесь будут настройки приложения." />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route></Routes></BrowserRouter>
