@@ -6,3 +6,4 @@ export interface Order { id: string; clientId: string; number: string; status: O
 export const paymentTypes = ['Предоплата', 'Оплата', 'Возврат'] as const;
 export type PaymentType = typeof paymentTypes[number];
 export interface Payment { id: string; orderId: string; date: string; amount: number; type: PaymentType }
+export interface OrganizationSettings { name: string; phone: string; email: string; address: string; logo: string }
