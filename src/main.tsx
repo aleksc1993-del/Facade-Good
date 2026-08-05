@@ -11,6 +11,7 @@ import { PaymentsPage } from '@pages/payments';
 import { DocumentsPage } from '@pages/documents';
 import { AnalyticsPage } from '@pages/analytics';
 import { ProductionCalendarPage } from '@pages/production-calendar';
+import { NotificationsPage } from '@pages/notifications';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/documents" element={<DocumentsPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/production-calendar" element={<ProductionCalendarPage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route></Routes></BrowserRouter>
   </ConfigProvider>,

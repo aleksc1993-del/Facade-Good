@@ -15,6 +15,8 @@ const menuItems = [
   { key: '/settings', label: <Link to="/settings">Настройки</Link> },
 ];
 
+menuItems.push({ key: '/notifications', label: <Link to="/notifications">Уведомления</Link> });
+
 export function AppSidebar() {
   const { pathname } = useLocation();
   const selectedKey = menuItems.some((item) => item.key === pathname) ? pathname : '/';
