@@ -1,0 +1,19 @@
+import { useMemo, useState } from 'react';
+import { Button, Card, DatePicker, Form, Input, Modal, Select, Space, Table, Tag, Typography } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import dayjs, { type Dayjs } from 'dayjs';
+import styled from '@emotion/styled';
+import { createDefaultCalendar, getCalendarDayType, type CalendarDayType, type CalendarException, useProductionCalendarStore } from '@entities/production-calendar';
+
+const Header = styled.div({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 24, flexWrap: 'wrap' });
+const CalendarGrid = styled.div({ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8, marginTop: 20 });
+const DayCell = styled.div<{ dayType: CalendarDayType }>(({ dayType }) => ({ padding: 10, borderRadius: 8, border: '1px solid #e5e7eb', background: dayType === 'holiday' ? '#fff1f0' : dayType === 'weekend' ? '#f5f5f5' : '#f6ffed' }));
+interface ExceptionForm { date: Dayjs; type: CalendarDayType; comment: string }
+const labels: Record<CalendarDayType, string> = { workday: 'Рабочий день', weekend: 'Выходной', holiday: 'Праздник' };
+
+export function ProductionCalendarPage() {
+  const year = new Date().getFullYear(); const { calendars, addException, removeException } = useProductionCalendarStore(); const calendar = calendars.find((item) => item.year === year) ?? createDefaultCalendar(year); const [open, setOpen] = useState(false); const [form] = Form.useForm<ExceptionForm>();
+  const days = useMemo(() => Array.from({ length: 365 + (year % 4 === 0 ? 1 : 0) }, (_, index) => new Date(year, 0, index + 1)), [year]);
+  const save = (values: ExceptionForm) => { addException(year, { date: values.date.format('YYYY-MM-DD'), type: values.type, comment: values.comment }); setOpen(false); form.resetFields(); };
+  return <><Header><div><Typography.Title level={2}>Производственный календарь</Typography.Title><Typography.Text type="secondary">Рабочие дни, праздники и переносы для расчёта сроков заказов</Typography.Text></div><Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>Настроить день</Button></Header><Card title={`Календарь на ${year} год`} extra={<Tag color="green">Россия</Tag>}><Space wrap><Tag color="green">Рабочий день</Tag><Tag>Выходной</Tag><Tag color="red">Праздник</Tag></Space><CalendarGrid>{days.map((date) => { const type = getCalendarDayType(date, calendar); return <DayCell key={date.toISOString()} dayType={type}><Typography.Text strong>{date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}</Typography.Text><br /><Typography.Text type="secondary">{labels[type]}</Typography.Text></DayCell>; })}</CalendarGrid></Card><Card title="Ручные настройки" style={{ marginTop: 20 }}><Table<CalendarException> rowKey="date" dataSource={calendar.exceptions} pagination={{ pageSize: 10 }} columns={[{ title: 'Дата', dataIndex: 'date', render: (date: string) => dayjs(date).format('DD.MM.YYYY') }, { title: 'Тип', dataIndex: 'type', render: (type: CalendarDayType) => labels[type] }, { title: 'Комментарий', dataIndex: 'comment' }, { title: '', render: (_, item) => <Button danger type="text" icon={<DeleteOutlined />} onClick={() => removeException(year, item.date)} /> }]} /></Card><Modal title="Настроить день" open={open} onCancel={() => setOpen(false)} onOk={() => form.submit()} okText="Сохранить" cancelText="Отмена"><Form form={form} layout="vertical" onFinish={save}><Form.Item name="date" label="Дата" rules={[{ required: true }]}><DatePicker format="DD.MM.YYYY" /></Form.Item><Form.Item name="type" label="Тип дня" initialValue="workday"><Select options={Object.entries(labels).map(([value, label]) => ({ value, label }))} /></Form.Item><Form.Item name="comment" label="Комментарий"><Input /></Form.Item></Form></Modal></>;
+}
