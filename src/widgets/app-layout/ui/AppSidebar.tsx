@@ -9,6 +9,7 @@ const menuItems = [
   { key: '/clients', label: <Link to="/clients">Клиенты</Link> },
   { key: '/orders', label: <Link to="/orders">Заказы</Link> },
   { key: '/payments', label: <Link to="/payments">Платежи</Link> },
+  { key: '/documents', label: <Link to="/documents">Документы</Link> },
   { key: '/settings', label: <Link to="/settings">Настройки</Link> },
 ];
 

@@ -8,6 +8,7 @@ import { SettingsPage } from '@pages/settings';
 import { ClientsPage } from '@pages/clients';
 import { OrdersPage } from '@pages/orders';
 import { PaymentsPage } from '@pages/payments';
+import { DocumentsPage } from '@pages/documents';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/clients" element={<ClientsPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/payments" element={<PaymentsPage />} />
+      <Route path="/documents" element={<DocumentsPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route></Routes></BrowserRouter>
