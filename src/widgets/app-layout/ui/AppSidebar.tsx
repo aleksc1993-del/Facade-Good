@@ -9,6 +9,7 @@ const menuItems = [
   { key: '/', label: <Link to="/">Главная</Link> },
   { key: '/clients', label: <Link to="/clients">Клиенты</Link> },
   { key: '/orders', label: <Link to="/orders">Заказы</Link> },
+  { key: '/archive', label: <Link to="/archive">Архив</Link> },
   { key: '/production-calendar', label: <Link to="/production-calendar">Производственный календарь</Link> },
   { key: '/payments', label: <Link to="/payments">Платежи</Link> },
   { key: '/documents', label: <Link to="/documents">Документы</Link> },
