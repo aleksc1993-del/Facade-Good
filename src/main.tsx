@@ -9,11 +9,13 @@ import { ClientsPage } from '@pages/clients';
 import { OrdersPage } from '@pages/orders';
 import { PaymentsPage } from '@pages/payments';
 import { DocumentsPage } from '@pages/documents';
+import { AnalyticsPage } from '@pages/analytics';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
     <BrowserRouter><Routes><Route element={<App />}>
       <Route path="/" element={<DashboardPage />} />
+      <Route path="/analytics" element={<AnalyticsPage />} />
       <Route path="/clients" element={<ClientsPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/payments" element={<PaymentsPage />} />

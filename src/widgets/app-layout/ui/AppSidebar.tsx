@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 const Sidebar = styled(Layout.Sider)({ background: '#001529' });
 const Brand = styled(Typography.Title)({ color: '#fff !important', margin: '0 !important', padding: '24px 24px 20px', fontSize: 22, whiteSpace: 'nowrap' });
 const menuItems = [
+  { key: '/analytics', label: <Link to="/analytics">Аналитика</Link> },
   { key: '/', label: <Link to="/">Главная</Link> },
   { key: '/clients', label: <Link to="/clients">Клиенты</Link> },
   { key: '/orders', label: <Link to="/orders">Заказы</Link> },
