@@ -16,6 +16,7 @@ import { ArchivePage } from '@pages/archive';
 import { BackupPage } from '@pages/backup';
 import { ImportPage } from '@pages/import-data';
 import { SyncPage } from '@pages/sync';
+import { ProductionPage } from '@pages/production';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/documents" element={<DocumentsPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/production-calendar" element={<ProductionCalendarPage />} />
+      <Route path="/production" element={<ProductionPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/archive" element={<ArchivePage />} />
       <Route path="/backup" element={<BackupPage />} />

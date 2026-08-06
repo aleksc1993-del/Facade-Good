@@ -11,6 +11,7 @@ const menuItems = [
   { key: '/orders', label: <Link to="/orders">Заказы</Link> },
   { key: '/archive', label: <Link to="/archive">Архив</Link> },
   { key: '/production-calendar', label: <Link to="/production-calendar">Производственный календарь</Link> },
+  { key: '/production', label: <Link to="/production">Производство</Link> },
   { key: '/payments', label: <Link to="/payments">Платежи</Link> },
   { key: '/documents', label: <Link to="/documents">Документы</Link> },
   { key: '/settings', label: <Link to="/settings">Настройки</Link> },

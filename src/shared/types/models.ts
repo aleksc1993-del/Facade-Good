@@ -1,5 +1,5 @@
 export interface Client { id: string; name: string; phone: string; city: string; comment: string; createdAt: string; archivedAt?: string }
-export const orderStatuses = ['Новый', 'В работе', 'Готов', 'Выдан'] as const;
+export const orderStatuses = ['Новый', 'Замер', 'В работе', 'Фрезеровка', 'Покраска', 'Сушка', 'Упаковка', 'Готов', 'Выдан'] as const;
 export type OrderStatus = typeof orderStatuses[number];
 export interface OrderItem { id: string; name: string; height: number; width: number; quantity: number; price: number }
 export interface Order { id: string; clientId: string; number: string; contractNumber?: string; invoiceNumber?: string; status: OrderStatus; createdAt: string; deadline: string; comment: string; items: OrderItem[]; archivedAt?: string }
