@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { storage } from '../../../shared/lib/storage/storage';
+import { repository } from '@shared/api/repository/sqliteRepository';
 import type { Payment } from '../../../shared/types/models';
 interface PaymentState { payments: Payment[]; addPayment: (payment: Payment) => void; replacePayments: (payments: Payment[]) => void; deletePayment: (id: string) => void }
 export const usePaymentStore = create<PaymentState>((set) => ({
-  payments: storage.load<Payment[]>('payments', []),
-  addPayment: (payment) => set((state) => ({ payments: [...state.payments, payment] })),
+  payments: [],
+  addPayment: (payment) => { set((state) => ({ payments: [...state.payments, payment] })); void repository.savePayment(payment); },
   replacePayments: (payments) => set({ payments }),
-  deletePayment: (id) => set((state) => ({ payments: state.payments.filter((payment) => payment.id !== id) })),
+  deletePayment: (id) => { set((state) => ({ payments: state.payments.filter((payment) => payment.id !== id) })); void repository.deletePayment(id); },
 }));
-usePaymentStore.subscribe((state) => storage.save('payments', state.payments));
+void repository.getPayments().then((payments) => usePaymentStore.getState().replacePayments(payments));

@@ -17,6 +17,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "antd": "^5.27.0",
+    "better-sqlite3": "^12.11.1",
     "exceljs": "^4.4.0",
     "pdf-lib": "^1.17.1",
     "react": "^19.1.1",
