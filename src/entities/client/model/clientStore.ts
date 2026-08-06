@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { repository } from '@shared/api/repository/sqliteRepository';
+import { repository } from '@shared/api/repository/repository';
 import type { Client } from '../../../shared/types/models';
 interface ClientState { clients: Client[]; addClient: (client: Client) => void; replaceClients: (clients: Client[]) => void; updateClient: (client: Client) => void; archiveClient: (id: string) => void; restoreClient: (id: string) => void; deleteClient: (id: string) => void; searchClients: (query: string) => Client[] }
 export const useClientStore = create<ClientState>((set, get) => ({

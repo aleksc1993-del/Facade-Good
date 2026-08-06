@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { repository } from '@shared/api/repository/sqliteRepository';
+import { repository } from '@shared/api/repository/repository';
 import type { Payment } from '../../../shared/types/models';
 interface PaymentState { payments: Payment[]; addPayment: (payment: Payment) => void; replacePayments: (payments: Payment[]) => void; deletePayment: (id: string) => void }
 export const usePaymentStore = create<PaymentState>((set) => ({

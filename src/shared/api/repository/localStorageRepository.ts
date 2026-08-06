@@ -14,6 +14,7 @@ export class LocalStorageRepository implements StorageRepository {
   deleteClient = async (id: string) => this.saveValue('clients', read<Client[]>('clients', []).filter((item) => item.id !== id));
   getOrders = async () => read<Order[]>('orders', []);
   saveOrder = async (order: Order) => this.saveValue('orders', [...read<Order[]>('orders', []).filter((item) => item.id !== order.id), order]);
+  deleteOrder = async (id: string) => this.saveValue('orders', read<Order[]>('orders', []).filter((item) => item.id !== id));
   getPayments = async () => read<Payment[]>('payments', []);
   savePayment = async (payment: Payment) => this.saveValue('payments', [...read<Payment[]>('payments', []).filter((item) => item.id !== payment.id), payment]);
   deletePayment = async (id: string) => this.saveValue('payments', read<Payment[]>('payments', []).filter((item) => item.id !== id));

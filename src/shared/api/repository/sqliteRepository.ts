@@ -8,6 +8,7 @@ export class SQLiteRepository implements StorageRepository {
   deleteClient = (id: string) => api.databaseDelete('clients', id);
   getOrders = () => api.databaseGet<Order[]>('orders', []);
   saveOrder = (order: Order) => api.databaseSave('orders', order);
+  deleteOrder = (id: string) => api.databaseDelete('orders', id);
   getPayments = () => api.databaseGet<Payment[]>('payments', []);
   savePayment = (payment: Payment) => api.databaseSave('payments', payment);
   deletePayment = (id: string) => api.databaseDelete('payments', id);
@@ -18,5 +19,3 @@ export class SQLiteRepository implements StorageRepository {
   exportDatabase = () => api.databaseExport();
   importDatabase = (serialized: string) => api.databaseImport(serialized);
 }
-
-export const repository: StorageRepository = new SQLiteRepository();
