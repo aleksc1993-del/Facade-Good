@@ -14,6 +14,7 @@ import { ProductionCalendarPage } from '@pages/production-calendar';
 import { NotificationsPage } from '@pages/notifications';
 import { ArchivePage } from '@pages/archive';
 import { BackupPage } from '@pages/backup';
+import { ImportPage } from '@pages/import-data';
 
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/archive" element={<ArchivePage />} />
       <Route path="/backup" element={<BackupPage />} />
+      <Route path="/import" element={<ImportPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route></Routes></BrowserRouter>
   </ConfigProvider>,
