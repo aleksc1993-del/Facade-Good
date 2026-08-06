@@ -19,5 +19,8 @@ export async function initializeDatabase(): Promise<void> {
       amount NUMERIC(12, 2) NOT NULL, type TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS values_store (key TEXT PRIMARY KEY, value JSONB NOT NULL);
+    CREATE TABLE IF NOT EXISTS sync_devices (id TEXT PRIMARY KEY, name TEXT NOT NULL, last_seen_at TIMESTAMPTZ NOT NULL);
+    CREATE TABLE IF NOT EXISTS change_history (id TEXT PRIMARY KEY, entity TEXT NOT NULL, entity_id TEXT NOT NULL, operation TEXT NOT NULL, changed_at TIMESTAMPTZ NOT NULL, device_name TEXT NOT NULL, summary TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS sync_conflicts (id TEXT PRIMARY KEY, entity TEXT NOT NULL, entity_id TEXT NOT NULL, local_version TEXT NOT NULL, remote_version TEXT NOT NULL, detected_at TIMESTAMPTZ NOT NULL);
   `);
 }

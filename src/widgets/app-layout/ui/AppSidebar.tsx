@@ -16,6 +16,7 @@ const menuItems = [
   { key: '/settings', label: <Link to="/settings">Настройки</Link> },
   { key: '/backup', label: <Link to="/backup">Резервное копирование</Link> },
   { key: '/import', label: <Link to="/import">Импорт</Link> },
+  { key: '/sync', label: <Link to="/sync">Облачная синхронизация</Link> },
 ];
 
 menuItems.push({ key: '/notifications', label: <Link to="/notifications">Уведомления</Link> });

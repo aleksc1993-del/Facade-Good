@@ -33,6 +33,17 @@ app.get('/api/values/:key', async (req, res) => { const result = await pool.quer
 app.put('/api/values/:key', async (req, res) => { await pool.query('INSERT INTO values_store (key,value) VALUES ($1,$2) ON CONFLICT (key) DO UPDATE SET value=$2', [id(req), req.body]); res.status(204).send(); });
 app.delete('/api/values/:key', async (req, res) => { await pool.query('DELETE FROM values_store WHERE key=$1', [id(req)]); res.status(204).send(); });
 
+app.get('/api/sync/snapshot', async (_req, res) => {
+  const [devices, changes, conflicts] = await Promise.all([
+    pool.query('SELECT id, name, last_seen_at AS "lastSeenAt" FROM sync_devices ORDER BY last_seen_at DESC'),
+    pool.query('SELECT id, entity, entity_id AS "entityId", operation, changed_at AS "changedAt", device_name AS "deviceName", summary FROM change_history ORDER BY changed_at DESC LIMIT 100'),
+    pool.query('SELECT id, entity, entity_id AS "entityId", local_version AS "localVersion", remote_version AS "remoteVersion", detected_at AS "detectedAt" FROM sync_conflicts ORDER BY detected_at DESC'),
+  ]);
+  send(res, { lastSyncedAt: new Date().toISOString(), devices: devices.rows.map((device) => ({ ...device, current: false })), changes: changes.rows, conflicts: conflicts.rows });
+});
+app.post('/api/sync/run', async (_req, res) => { await pool.query('INSERT INTO sync_devices (id,name,last_seen_at) VALUES ($1,$2,NOW()) ON CONFLICT (id) DO UPDATE SET last_seen_at=NOW()', ['desktop-local', 'Текущий компьютер']); res.redirect(307, '/api/sync/snapshot'); });
+app.post('/api/sync/conflicts/:id', async (req, res) => { const result = await pool.query('DELETE FROM sync_conflicts WHERE id=$1 RETURNING id', [id(req)]); if (result.rowCount === 0) return res.sendStatus(404); res.json({ id: id(req), ...req.body }); });
+
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 const port = Number(process.env.PORT ?? 3000);
 initializeDatabase().then(() => app.listen(port, () => console.log(`Facade-Good API listening on port ${port}`))).catch((error: unknown) => { console.error(error); process.exit(1); });
