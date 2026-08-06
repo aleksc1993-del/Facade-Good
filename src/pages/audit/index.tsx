@@ -1,0 +1,3 @@
+import { Card, Table, Tag, Typography } from 'antd';
+import { usePlatformStore } from '@entities/platform/model/platformStore';
+export function AuditPage() { const entries = usePlatformStore((state) => state.audit); return <Card title={<Typography.Title level={2}>Журнал действий</Typography.Title>}><Table rowKey="id" dataSource={entries} pagination={{ pageSize: 15 }} columns={[{ title: 'Дата', dataIndex: 'createdAt', render: (value: string) => new Date(value).toLocaleString('ru-RU') }, { title: 'Действие', dataIndex: 'action' }, { title: 'Сущность', dataIndex: 'entity', render: (value: string) => <Tag>{value}</Tag> }, { title: 'Подробности', dataIndex: 'details' }]} /></Card>; }

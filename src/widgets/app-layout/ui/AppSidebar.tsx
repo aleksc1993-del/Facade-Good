@@ -21,6 +21,7 @@ const menuItems = [
 ];
 
 menuItems.push({ key: '/notifications', label: <Link to="/notifications">Уведомления</Link> });
+menuItems.push({ key: '/audit', label: <Link to="/audit">Журнал действий</Link> });
 
 export function AppSidebar() {
   const { pathname } = useLocation();

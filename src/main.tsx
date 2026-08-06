@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme as antdTheme } from 'antd';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import 'antd/dist/reset.css';
@@ -17,9 +17,12 @@ import { BackupPage } from '@pages/backup';
 import { ImportPage } from '@pages/import-data';
 import { SyncPage } from '@pages/sync';
 import { ProductionPage } from '@pages/production';
+import { AuditPage } from '@pages/audit';
+import { usePlatformStore } from '@entities/platform/model/platformStore';
 
-createRoot(document.getElementById('root')!).render(
-  <ConfigProvider theme={{ token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
+function Root() {
+  const theme = usePlatformStore((state) => state.theme);
+  return <ConfigProvider theme={{ algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm, token: { colorPrimary: '#1677ff', borderRadius: 8 } }}>
     <BrowserRouter><Routes><Route element={<App />}>
       <Route path="/" element={<DashboardPage />} />
       <Route path="/analytics" element={<AnalyticsPage />} />
@@ -35,7 +38,9 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/backup" element={<BackupPage />} />
       <Route path="/import" element={<ImportPage />} />
       <Route path="/sync" element={<SyncPage />} />
+      <Route path="/audit" element={<AuditPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route></Routes></BrowserRouter>
-  </ConfigProvider>,
-);
+  </ConfigProvider>;
+}
+createRoot(document.getElementById('root')!).render(<Root />);
