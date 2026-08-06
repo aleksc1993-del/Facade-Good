@@ -14,6 +14,7 @@ const menuItems = [
   { key: '/payments', label: <Link to="/payments">Платежи</Link> },
   { key: '/documents', label: <Link to="/documents">Документы</Link> },
   { key: '/settings', label: <Link to="/settings">Настройки</Link> },
+  { key: '/backup', label: <Link to="/backup">Резервное копирование</Link> },
 ];
 
 menuItems.push({ key: '/notifications', label: <Link to="/notifications">Уведомления</Link> });

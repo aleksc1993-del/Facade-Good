@@ -4,10 +4,6 @@ import { getOrderBalance, getOrderPaid, getOrderTotal } from '../order-financial
 
 export interface PdfExportData { title: string; html: string; text: string; fileName: string }
 
-declare global {
-  interface Window { facadeGood?: { printToPdf: (html: string, fileName: string) => Promise<boolean> } }
-}
-
 const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character] ?? character);
 const money = (value: number): string => `${value.toLocaleString('ru-RU')} ₽`;
 

@@ -12,6 +12,8 @@ export interface StorageAdapter {
   save<T>(key: string, value: T): void;
   remove(key: string): void;
   clear(): void;
+  exportDatabase(): string;
+  importDatabase(serialized: string): boolean;
 }
 
 interface StoredValue {
@@ -94,5 +96,23 @@ export const storage: StorageAdapter = {
       if (key?.startsWith(databasePrefix)) keysToRemove.push(key);
     }
     keysToRemove.forEach((key) => localStorage.removeItem(key));
+  },
+  exportDatabase: (): string => {
+    migrateDatabase();
+    const data: Record<string, string> = {};
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith(databasePrefix)) { const value = localStorage.getItem(key); if (value !== null) data[key] = value; }
+    }
+    return JSON.stringify({ format: 'facade-good-backup', version: currentDatabaseVersion, createdAt: new Date().toISOString(), data });
+  },
+  importDatabase: (serialized: string): boolean => {
+    try {
+      const backup = JSON.parse(serialized) as { format?: string; data?: Record<string, string> };
+      if (backup.format !== 'facade-good-backup' || !backup.data || typeof backup.data !== 'object') return false;
+      storage.clear();
+      Object.entries(backup.data).forEach(([key, value]) => { if (key.startsWith(databasePrefix) && typeof value === 'string') localStorage.setItem(key, value); });
+      return true;
+    } catch { return false; }
   },
 };
